@@ -1,6 +1,5 @@
 import json
 import time
-# import os
 
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
@@ -68,14 +67,10 @@ def compare_features(json1, json2, priority_order):
 
     best_attributes = [attr for attr, similarity in similarities.items() if similarity == highest_similarity]
 
-    results=[]
+    results={}
     for best_attribute in best_attributes:
-            result = {
-                "best_attribute": best_attribute,
-                "similarity": highest_similarity*100,
-                "matching_features in highest matching": matching_features.get(best_attribute, []),        
-            }
-            results.append(result)
+        results["best_attribute"] = best_attribute
+        results.update(json1[best_attribute])
     output_file = "result.json"  
     with open(output_file, 'w') as outfile:
         json.dump(results, outfile, indent=4)
@@ -93,7 +88,6 @@ def main():
     compare_features(json1, json2,priority_order)
     # print(best_attribute)
     
-    # Watch for changes in random.json
     print("Watching random.json for changes...")
     watch_file(json1_path, json2_path, compare_features,priority_order)
 
